@@ -1,0 +1,11 @@
+<svg viewBox = "0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="211" cy="214" rx="72" ry="101" style="fill:#000000;"/>
+    <ellipse id="lamp1" cx="212" cy="214" rx="68" ry="98" style="fill:#ff0000;filter:brightness(80%);"/>
+    <rect x="139" y="213" width="10" height="116" style="fill:#000000;"/>
+    <rect x="274" y="204" width="9" height="126" style="fill:#000000;"/>
+    <rect id="lamp2" x="145" y="204" width="134" height="126" style="fill:#ff0000;filter:brightness(80%);"/>
+    <rect x="123" y="324" width="179" height="40" style="fill:#000000;"/>
+    <rect x="240" y="354" width="30" height="212" style="fill:#000000"/>
+    <rect x="154" y="348" width="26" height="130" style="fill:#000000"/>
+</svg>
+

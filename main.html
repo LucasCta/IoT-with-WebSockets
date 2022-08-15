@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Main Node</title>
+</head>
+<body>
+    <div id="mydiv" style="position: absolute; background-color: aqua; width: 20vw; height: 30vw; border: solid;">
+        <div id="mydivheader" style="background-color: blue;; padding-left: 0; height: 8%;"></div> 
+        <form action="/" method="post" style="padding-left: 1vw; padding-bottom: 10px;">
+            <object id="led" style="width: 50%;" type="image/svg+xml" data="led.svg"></object>
+            <h1 style="font-size: 2vw;">Led Morse</h1>
+            <p style="font-size: 1vw;">This is a paragraph.</p>
+            <p style="font-size: 1vw;">This is another paragraph.</p>
+            <input style="width: 80%;" pattern="[a-x]{1,32}" required>
+            <button style="font-size: 1vw; width: 4vw; height: 2vw;">Send</button>
+        </form>
+        <button style="margin-left: 5%; width: 10%; height: 4%;"id="but"></button>
+    </div>
+    <script>
+        var blinkId = 0;
+        document.getElementById("but").addEventListener("click", function() {
+            if (blinkId != 0) {
+                clearInterval(blinkId);
+                blinkId = 0;
+            } else {blinkId = blink();}
+        });
+        var cl = 0;
+        var lamp = ["fill: red; filter: brightness(80%);","fill: red; filter: drop-shadow(0 0 2rem red);"];
+        function blink() { 
+            var refreshIntervalId = setInterval(() => {
+                var doc = document.getElementById("led").getSVGDocument();
+                doc.getElementById("lamp1").setAttribute("style", lamp[cl]);
+                doc.getElementById("lamp2").setAttribute("style", lamp[cl]);
+                if (cl == 0) {cl = 1;} else {cl = 0;}
+            }, 700); return refreshIntervalId;
+        }
+    </script>
+    <script src="drag.js"></script>
+</body>
