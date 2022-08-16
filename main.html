@@ -2,6 +2,7 @@
 <head>
     <meta charset="utf-8">
     <title>Main Node</title>
+    <script defer src="drag.js"></script>
 </head>
 <body>
     <div id="mydiv" style="position: absolute; background-color: aqua; width: 20vw; height: 30vw; border: solid;">
@@ -20,6 +21,7 @@
         var blinkId = 0;
         document.getElementById("but").addEventListener("click", function() {
             if (blinkId != 0) {
+                console.log("Led stopped blinking");
                 clearInterval(blinkId);
                 blinkId = 0;
             } else {blinkId = blink();}
@@ -27,13 +29,23 @@
         var cl = 0;
         var lamp = ["fill: red; filter: brightness(80%);","fill: red; filter: drop-shadow(0 0 2rem red);"];
         function blink() { 
+            console.log("Led is blinking");
             var refreshIntervalId = setInterval(() => {
                 var doc = document.getElementById("led").getSVGDocument();
                 doc.getElementById("lamp1").setAttribute("style", lamp[cl]);
                 doc.getElementById("lamp2").setAttribute("style", lamp[cl]);
                 if (cl == 0) {cl = 1;} else {cl = 0;}
-            }, 700); return refreshIntervalId;
+            }, 500); return refreshIntervalId;
         }
     </script>
-    <script src="drag.js"></script>
+    <script type="module">
+        import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+        const socket = io();
+        socket.on('connect', () => {
+            console.log(`Client Connected: ${socket.id}`);
+        });
+        socket.on('blink', (state) => {
+            document.getElementById("but").click();
+        });
+    </script>
 </body>
