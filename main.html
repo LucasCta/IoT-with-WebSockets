@@ -2,50 +2,58 @@
 <head>
     <meta charset="utf-8">
     <title>Main Node</title>
+    <link rel="shortcut icon" href="led.svg">
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            background-image: url('wallpaper.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .container {
+            width: 960px;
+            margin: 0 auto;
+            padding: 0px;
+            position: relative;
+        }
+    </style>
     <script defer src="drag.js"></script>
 </head>
 <body>
-    <div id="mydiv" style="position: absolute; background-color: aqua; width: 20vw; height: 30vw; border: solid;">
-        <div id="mydivheader" style="background-color: blue;; padding-left: 0; height: 8%;"></div> 
-        <form action="/" method="post" style="padding-left: 1vw; padding-bottom: 10px;">
-            <object id="led" style="width: 50%;" type="image/svg+xml" data="led.svg"></object>
-            <h1 style="font-size: 2vw;">Led Morse</h1>
-            <p style="font-size: 1vw;">This is a paragraph.</p>
-            <p style="font-size: 1vw;">This is another paragraph.</p>
-            <input style="width: 80%;" pattern="[a-x]{1,32}" required>
-            <button style="font-size: 1vw; width: 4vw; height: 2vw;">Send</button>
-        </form>
-        <button style="margin-left: 5%; width: 10%; height: 4%;"id="but"></button>
+    <div class="" id="mydiv" style="position: absolute; top: 40px; left: 60px; background-color: white; width: 400px; height: 450px; border: solid;">
+        <div id="mydivheader" style="background-color: blue; padding-left: 0; height: 8%;"></div> 
+        <div id="mydivcontent" style="width: 100%; height: 100%; padding-left: 1vw; padding-bottom: 10px;">
+            <object id="led" style="margin-left: 80px; width: 50%;" type="image/svg+xml" data="led.svg"></object>
+            <h1 style="font-size: 50px;">Led Morse</h1>
+            <input id="morse" style="float: left; padding-left: 15px; font-size: 20px; width: 270px; height: 50px" pattern="[a-y]{1,32}" minlength="1" maxlength="32" required> 
+            <button class="popup" id="but" style="float: left; background-color: green; width: 45px; height: 50px; margin: 2.5px 0 0 10px; border-radius: 10px;"></button>
+            <div class="popup"><span class="popuptext" id="myPopup">Wait your turn...</span></div>
+        </div>
     </div>
-    <script>
-        var blinkId = 0;
-        document.getElementById("but").addEventListener("click", function() {
-            if (blinkId != 0) {
-                console.log("Led stopped blinking");
-                clearInterval(blinkId);
-                blinkId = 0;
-            } else {blinkId = blink();}
-        });
-        var cl = 0;
-        var lamp = ["fill: red; filter: brightness(80%);","fill: red; filter: drop-shadow(0 0 2rem red);"];
-        function blink() { 
-            console.log("Led is blinking");
-            var refreshIntervalId = setInterval(() => {
-                var doc = document.getElementById("led").getSVGDocument();
-                doc.getElementById("lamp1").setAttribute("style", lamp[cl]);
-                doc.getElementById("lamp2").setAttribute("style", lamp[cl]);
-                if (cl == 0) {cl = 1;} else {cl = 0;}
-            }, 500); return refreshIntervalId;
-        }
-    </script>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
         const socket = io();
+        document.getElementById("but").addEventListener("click", function() {
+            socket.emit('morse', document.getElementById("morse").value);
+        }); var doc = document.getElementById("led").getSVGDocument();
         socket.on('connect', () => {
             console.log(`Client Connected: ${socket.id}`);
-        });
-        socket.on('blink', (state) => {
-            document.getElementById("but").click();
+            socket.on('on', (state) => {
+                doc.getElementById("lamp1").setAttribute("style", "fill: red; filter: drop-shadow(0 0 2rem red);");
+                doc.getElementById("lamp2").setAttribute("style", "fill: red; filter: drop-shadow(0 0 2rem red);");
+                document.getElementById("but").style.backgroundColor = "crimson";
+            });
+            socket.on('off', (state) => {
+                doc.getElementById("lamp1").setAttribute("style", "fill: red; filter: brightness(50%);");
+                doc.getElementById("lamp2").setAttribute("style", "fill: red; filter: brightness(50%);");
+                document.getElementById("but").style.backgroundColor = "green";
+                document.getElementById("myPopup").classList.remove("show");
+            });
+            socket.on('wait', (state) => {
+                document.getElementById("myPopup").classList.add("show");
+            });
         });
     </script>
 </body>
