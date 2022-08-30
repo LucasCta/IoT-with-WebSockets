@@ -9,12 +9,12 @@
     <script defer src="drag.js"></script>
 </head>
 <body>
-    <div class="" id="mydiv" style="position: absolute; top: 40px; left: 60px; background-color: white; width: 400px; height: 450px; border: solid;">
-        <div id="mydivheader" style="background-color: blue; padding-left: 0; height: 8%;"></div> 
-        <div id="mydivcontent" style="width: 100%; height: 100%; padding-left: 1vw; padding-bottom: 10px;">
+    <div id="mydiv" class="floatingDiv" style="top: 40px; left: 60px;">
+        <div id="mydivheader" class="fdivHeader"></div> 
+        <div id="mydivcontent" class="fdivContent">
             <object id="led" style="margin-left: 80px; width: 50%;" type="image/svg+xml" data="led.svg"></object>
             <h1 style="font-size: 50px;">Led Morse</h1>
-            <input id="morse" style="float: left; padding-left: 15px; font-size: 20px; width: 270px; height: 50px" pattern="[a-y]{1,32}" minlength="1" maxlength="32" required> 
+            <input id="morse" style="float: left; padding-left: 15px; font-size: 20px; width: 270px; height: 50px" minlength="1" maxlength="32" required> 
             <button class="popup" id="but" style="float: left; background-color: green; width: 45px; height: 50px; margin: 2.5px 0 0 10px; border-radius: 10px;"></button>
             <div class="popup"><span class="popuptext" id="myPopup">Wait your turn...</span></div>
         </div>

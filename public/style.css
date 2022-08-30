@@ -4,9 +4,27 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 .container {
     width: 960px;
     margin: 0 auto;
     padding: 0px;
     position: relative;
+}
+
+.floatingDiv{
+    position: absolute;
+    background-color: white; 
+    width: 400px; height: 450px;
+    border: solid;
+}
+
+.fdivHeader{
+    background-color: blue; 
+    height: 40px;
+}
+
+.fdivContent{
+    padding-left: 20px; 
+    padding-bottom: 10px;
 }
