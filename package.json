@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.1",
+    "johnny-five": "^2.1.0",
     "nodemon": "^2.0.19",
     "serialport": "^10.4.0",
     "socket.io": "^4.5.1",

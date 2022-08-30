@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    background-image: url('wallpaper.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.container {
+    width: 960px;
+    margin: 0 auto;
+    padding: 0px;
+    position: relative;
+}

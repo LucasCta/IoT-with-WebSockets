@@ -5,20 +5,7 @@
     <link rel="shortcut icon" href="led.svg">
     <link rel="stylesheet" href="popup.css">
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            margin: 0;
-            background-image: url('wallpaper.jpg');
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        .container {
-            width: 960px;
-            margin: 0 auto;
-            padding: 0px;
-            position: relative;
-        }
-    </style>
+    <script defer type="module" src="led.js"></script>
     <script defer src="drag.js"></script>
 </head>
 <body>
@@ -32,28 +19,4 @@
             <div class="popup"><span class="popuptext" id="myPopup">Wait your turn...</span></div>
         </div>
     </div>
-    <script type="module">
-        import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-        const socket = io();
-        document.getElementById("but").addEventListener("click", function() {
-            socket.emit('morse', document.getElementById("morse").value);
-        }); var doc = document.getElementById("led").getSVGDocument();
-        socket.on('connect', () => {
-            console.log(`Client Connected: ${socket.id}`);
-            socket.on('on', (state) => {
-                doc.getElementById("lamp1").setAttribute("style", "fill: red; filter: drop-shadow(0 0 2rem red);");
-                doc.getElementById("lamp2").setAttribute("style", "fill: red; filter: drop-shadow(0 0 2rem red);");
-                document.getElementById("but").style.backgroundColor = "crimson";
-            });
-            socket.on('off', (state) => {
-                doc.getElementById("lamp1").setAttribute("style", "fill: red; filter: brightness(50%);");
-                doc.getElementById("lamp2").setAttribute("style", "fill: red; filter: brightness(50%);");
-                document.getElementById("but").style.backgroundColor = "green";
-                document.getElementById("myPopup").classList.remove("show");
-            });
-            socket.on('wait', (state) => {
-                document.getElementById("myPopup").classList.add("show");
-            });
-        });
-    </script>
 </body>
