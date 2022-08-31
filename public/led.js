@@ -1,7 +1,9 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 const socket = io();
+document.getElementById("ledon").addEventListener("click", () => {socket.emit('ledon');}); 
+document.getElementById("ledoff").addEventListener("click", () => {socket.emit('ledoff');}); 
 document.getElementById("but").addEventListener("click", function() {
-    socket.emit('morse', document.getElementById("morse").value);
+    socket.emit('morseMqtt', document.getElementById("morse").value);
 }); var doc = document.getElementById("led").getSVGDocument();
 socket.on('connect', () => {
     console.log(`Client Connected: ${socket.id}`);
