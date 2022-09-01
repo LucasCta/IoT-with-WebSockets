@@ -57,8 +57,6 @@ void setup(){
   Serial.begin(57600);
   client.setServer("broker.emqx.io", 1883);
   client.setCallback(callback);
-  
-  //Ethernet.begin(mac, ip);
 
   Serial.println("Obtaining an IP address using DHCP");
   if (Ethernet.begin(mac) == 0) {
