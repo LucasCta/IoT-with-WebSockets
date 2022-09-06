@@ -1,11 +1,3 @@
-/*
-
- It will reconnect to the server if the connection is lost using a blocking
- reconnect function. See the 'mqtt_reconnect_nonblocking' example for how to
- achieve the same result without blocking the main loop.
- 
-*/
-
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
@@ -14,36 +6,42 @@ byte mac[] = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "SSD1306Ascii.h"
+#include "SSD1306AsciiAvrI2c.h"
+#define I2C_ADDRESS 0x3C
 
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
-Adafruit_SSD1306 display(128, 64, &Wire, OLED_RESET);
+SSD1306AsciiAvrI2c oled;
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i=0;i<length;i++) {
-    Serial.print((char)payload[i]);
-  } Serial.println();
   if (!strncmp((char *)payload, "on", length)) {
       digitalWrite(7, 1);
-      client.publish("nodejs", "led on");
+      client.publish("Arduino", "Led On");
+      oled.setRow(7);
+      oled.println("> Led On          ");
   } else if (!strncmp((char *)payload, "off", length)) {
       digitalWrite(7, 0);
-      client.publish("nodejs", "led off");
+      client.publish("Arduino", "Led Off");
+      oled.setRow(7);
+      oled.println("> Led Off         ");
   }
 }
 
-long lastReconnectAttempt = 0;
-boolean reconnect() {
-  if (client.connect("arduinoClient")) {
-    client.publish("outTopic","hello world");
-    client.subscribe("inTopic");
-  } return client.connected();
+void reconnect() {
+  while (!client.connected()) {
+    oled.clear();
+    oled.println(Ethernet.localIP());
+    oled.println("> Connecting...              ");
+    if (client.connect("arduinoClient00001","emqx","public")) {
+      client.publish("arduino","Arduino Connected");
+      client.subscribe("nodejs");
+      oled.println(F("> Mqtt Connected              "));
+    } else {
+      oled.print("Failed, rc=");
+      oled.println(client.state());
+      oled.println("Trying again in 5 seconds");
+      delay(5000);
+    }
+  }
 }
 
 void setup(){
@@ -52,40 +50,36 @@ void setup(){
   Serial.begin(9600);
   pinMode(7, OUTPUT);
   
-  //====Display Setup====
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  } Serial.println(F("SSD1306 allocation success"));
-  display.clearDisplay(); delay(1500);
-  display.setTextSize(1);            
-  display.setTextColor(SSD1306_WHITE); 
-  display.setCursor(0,0);
+  //====oled Setup====
+  oled.begin(&Adafruit128x64, I2C_ADDRESS);
+  oled.setFont(Adafruit5x7);
+  oled.clear();
   
   //====Ethernet Connection====
-  display.println(F("Obtaining an IP address using DHCP"));
+  oled.println(F("Obtaining IP address..."));
   if (Ethernet.begin(mac) == 0) {
-    display.println(F("Failed to obtaining an IP address"));
+    oled.println(F("Failed to obtain IP address"));
     if (Ethernet.hardwareStatus() == EthernetNoHardware)
-      display.println(F("Ethernet shield was not found"));
+      oled.println(F("Ethernet shield was not found"));
     if (Ethernet.linkStatus() == LinkOFF)
-      display.println(F("Ethernet cable is not connected."));
-    display.display();
+      oled.println(F("Ethernet cable is not connected."));
     while (true);
-  } 
-  display.print("- Arduino's IP address   : ");
-  display.println(Ethernet.localIP());
-  display.print("- Gateway's IP address   : ");
-  display.println(Ethernet.gatewayIP());
-  display.print("- Network's subnet mask  : ");
-  display.println(Ethernet.subnetMask());
-  display.print("- DNS server's IP address: ");
-  display.println(Ethernet.dnsServerIP());
+  } oled.clear();
+  oled.println("Arduino's IP address:");
+  oled.println(Ethernet.localIP());
+  oled.println("Gateway's IP address:");
+  oled.println(Ethernet.gatewayIP());
+  oled.println("Network's subnet mask:");
+  oled.println(Ethernet.subnetMask());
+  oled.println("DNS server's IP address:");
+  oled.println(Ethernet.dnsServerIP());
+  delay(5000);
+  oled.clear();
+  oled.println(Ethernet.localIP());
   
   //====MQTT Connection====
   client.setServer("broker.emqx.io", 1883);
   client.setCallback(callback);
-  lastReconnectAttempt = 0;
   
 }
 
@@ -93,12 +87,8 @@ void loop(){
 
   //====MQTT Reconnection====
   if (!client.connected()) {
-    long now = millis();
-    if (now - lastReconnectAttempt > 5000) {
-      lastReconnectAttempt = now;
-      if (reconnect()) lastReconnectAttempt = 0;
-    }
-  } else { client.loop();}
+    reconnect();
+  } client.loop();
 
   
 }

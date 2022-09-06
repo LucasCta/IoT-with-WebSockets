@@ -18,9 +18,9 @@ export default function MqttTest(){
     })
 
     client.on('connect', function () {
-        console.log('Connected')
-        client.subscribe('nodejs');
-        console.log('Subscribed');
+        console.log('> Mqtt Connected')
+        client.subscribe('arduino');
+        console.log('> Subscribed to Arduino');
     });
 
     client.on('message', function (topic, payload) {
