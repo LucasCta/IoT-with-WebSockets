@@ -12,6 +12,19 @@ PubSubClient client(ethClient);
 
 SSD1306AsciiAvrI2c oled;
 
+#include <Keypad.h>
+
+const byte ROWS = 4; 
+const byte COLS = 3;
+char hexaKeys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+}; byte rowPins[ROWS] = {8,7,6,5};
+byte colPins[COLS] = {4,3,2};
+Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+
 void callback(char* topic, byte* payload, unsigned int length) {
   if (!strncmp((char *)payload, "on", length)) {
       digitalWrite(7, 1);
@@ -29,6 +42,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   while (!client.connected()) {
     oled.clear();
+    oled.setRow(0);
     oled.println(Ethernet.localIP());
     oled.println("> Connecting...              ");
     if (client.connect("arduinoClient00001","emqx","public")) {
@@ -90,5 +104,22 @@ void loop(){
     reconnect();
   } client.loop();
 
+  String keyp[5]; 
+  char customKey = customKeypad.getKey();
+  if (customKey){
+    oled.set2X(); oled.setRow(5);
+    if (customKey == '*' && keyp.length() > 0){
+      keyp[keyp.length()-1] = '\0';
+    } else if (customKey == '#' && keyp.length() > 0) {
+      char charBuf[50]; keyp.toCharArray(charBuf, 50);
+      client.publish("arduino", charBuf);
+      oled.print("> SENT");
+      delay(500); oled.print("> ");
+    } else if (keyp.length() < 5){
+      keyp[keyp.length()] = customKey;
+      oled.print("> ");
+      oled.println(keyp);
+    } oled.set1X();
+  }
   
 }
