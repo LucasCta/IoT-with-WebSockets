@@ -23,6 +23,7 @@ char hexaKeys[ROWS][COLS] = {
   {'*','0','#'}
 }; byte rowPins[ROWS] = {8,7,6,5};
 byte colPins[COLS] = {4,3,2};
+String keyp; 
 Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -68,7 +69,7 @@ void setup(){
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(Adafruit5x7);
   oled.clear();
-  
+
   //====Ethernet Connection====
   oled.println(F("Obtaining IP address..."));
   if (Ethernet.begin(mac) == 0) {
@@ -104,22 +105,34 @@ void loop(){
     reconnect();
   } client.loop();
 
-  String keyp[5]; 
+  //====Keypad Message====
   char customKey = customKeypad.getKey();
   if (customKey){
-    oled.set2X(); oled.setRow(5);
-    if (customKey == '*' && keyp.length() > 0){
-      keyp[keyp.length()-1] = '\0';
-    } else if (customKey == '#' && keyp.length() > 0) {
-      char charBuf[50]; keyp.toCharArray(charBuf, 50);
-      client.publish("arduino", charBuf);
-      oled.print("> SENT");
-      delay(500); oled.print("> ");
+    
+    oled.set2X();
+    if (customKey == '*'){
+      if (keyp.length() > 0){ 
+        keyp.remove(keyp.length()-1); 
+      }
+    } else if (customKey == '#') {
+      if (keyp.length() > 0){
+        char charBuf[50]; keyp.toCharArray(charBuf, 50);
+        client.publish("arduino", charBuf);
+        oled.setCursor(0,0); oled.setRow(5);
+        oled.print("> SENT        ");
+        while (keyp.length() > 0) {
+          keyp.remove(keyp.length()-1);
+        } delay(500);
+      }
     } else if (keyp.length() < 5){
-      keyp[keyp.length()] = customKey;
-      oled.print("> ");
-      oled.println(keyp);
-    } oled.set1X();
+      keyp.concat(customKey);
+      Serial.println(keyp);
+    } 
+    oled.setCursor(0,0); oled.setRow(5);
+    oled.print("                     ");
+    oled.setCursor(0,0); oled.setRow(5);
+    oled.print("> "); oled.print(keyp);
+    oled.set1X();
   }
   
 }
