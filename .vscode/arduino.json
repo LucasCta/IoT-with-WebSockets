@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "resources/mqtt_oled/mqtt_oled.ino",
+    "sketch": "mqtt_oled.ino",
     "port": "/dev/ttyACM0"
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Main Node</title>
+    <link rel="shortcut icon" href="led.svg">
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="style.css">
+    <script defer type="module" src="led.js"></script>
+    <script defer src="drag.js"></script>
+</head>
+<body>
+    <div id="mydiv" class="floatingDiv" style="top: 40px; left: 60px;">
+        <div id="mydivheader" class="fdivHeader"></div> 
+        <div id="mydivcontent" class="fdivContent">
+            <object id="led" style="margin-left: 80px; width: 50%;" type="image/svg+xml" data="led.svg"></object>
+            <h1 style="font-size: 50px;">Led Morse</h1>
+            <input id="morse" style="float: left; padding-left: 15px; font-size: 20px; width: 270px; height: 50px" minlength="1" maxlength="32" required> 
+            <button class="popup" id="but" style="float: left; background-color: green; width: 45px; height: 50px; margin: 2.5px 0 0 10px; border-radius: 10px;"></button>
+            <div class="popup"><span class="popuptext" id="myPopup">Wait your turn...</span></div>
+        </div>
+    </div>
+    <div id="mydiv2" class="floatingDiv" style="top: 40px; left: 500px;">
+        <div id="mydiv2header" class="fdivHeader"></div> 
+        <div id="mydiv2content" class="fdivContent">
+            <object id="led" style="margin-left: 80px; width: 50%;" type="image/svg+xml" data="led.svg"></object>
+            <h1 style="font-size: 50px;">Led Mqtt</h1>
+            <button id="ledon" style="float: left; background-color: green; width: 45px; height: 50px; margin: 2.5px 0 0 10px; border-radius: 10px;"></button>
+            <button id="ledoff" style="float: left; background-color: red; width: 45px; height: 50px; margin: 2.5px 0 0 10px; border-radius: 10px;"></button>
+        </div>
+    </div>
+</body>

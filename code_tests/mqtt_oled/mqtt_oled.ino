@@ -88,8 +88,7 @@ void setup(){
   oled.println(Ethernet.subnetMask());
   oled.println("DNS server's IP address:");
   oled.println(Ethernet.dnsServerIP());
-  delay(5000);
-  oled.clear();
+  delay(5000); oled.clear();
   oled.println(Ethernet.localIP());
   
   //====MQTT Connection====
@@ -108,7 +107,6 @@ void loop(){
   //====Keypad Message====
   char customKey = customKeypad.getKey();
   if (customKey){
-    
     oled.set2X();
     if (customKey == '*'){
       if (keyp.length() > 0){ 
